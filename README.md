@@ -131,7 +131,7 @@ Estimated Delivery Time: Predicted time (in minutes) for the food to be delivere
 1. Clone this repository:
 
    git clone       
-https://github.com/your-username/food-delivery-time-prediction.git
+https://github.com/dhinakaran311/food-delivery-time-prediction.git
 cd food-delivery-time-prediction
 
 
