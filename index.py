@@ -3,6 +3,7 @@ import pandas as pd
 import pickle
 import random
 import time
+from datetime import datetime, timedelta
 
 # Set a custom page configuration
 st.set_page_config(
@@ -12,20 +13,16 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Styling the app's background and buttons using CSS
+# Background style and customizations
 st.markdown(
     """
     <style>
     [data-testid="stAppViewContainer"] {
-        background-color: #f9f9f9;
-        background-image: radial-gradient(circle, #e2edff, #d3e3ff);
+        background-color: #121212;
+        color: white;
     }
     [data-testid="stSidebar"] {
-        background-color: #ffffff;
-        border-right: 1px solid #ddd;
-    }
-    .css-1offfwp {
-        font-family: 'Arial', sans-serif;
+        background-color: #1f1f1f;
     }
     .stButton>button {
         background-color: #4caf50;
@@ -40,21 +37,17 @@ st.markdown(
         background-color: #45a049;
         transform: scale(1.05);
     }
-    .stProgress {
-        height: 20px;
-        background-color: #d3e3ff;
-    }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# App header and title
-st.image("food.jpeg", use_container_width=True)
+# App header
+st.image("food.jpeg")
 st.title("🚀 Food Delivery Time Prediction")
 st.subheader("Predict how long your food delivery will take based on various factors.")
 
-# Fun facts for user engagement
+# Fun facts about food delivery
 fun_facts = [
     "Did you know? The world's longest food delivery took 1 hour 45 minutes!",
     "Fun fact: The fastest delivery time recorded was under 10 minutes!",
@@ -62,37 +55,34 @@ fun_facts = [
     "In some countries, delivery riders travel by bicycles for quicker delivery."
 ]
 
-# Input form for user details
+# Interactive inputs in cards
 with st.form("prediction_form"):
     st.header("Enter Delivery Details:")
 
-    # Weather and traffic conditions
+    # Input fields within cards
     st.markdown("### 🚗 Traffic & Weather")
     weather = st.selectbox("Weather Conditions", ['Windy', 'Clear', 'Foggy', 'Rainy', 'Snowy'])
     traffic_level = st.selectbox("Traffic Level", ['Low', 'Medium', 'High'])
 
-    # Vehicle type and distance input
     st.markdown("### 🛵 Vehicle & Delivery Time")
     vehicle_type = st.radio("Vehicle Type", ['Scooter', 'Bike', 'Car'], horizontal=True)
     Distance = st.slider("Trip Distance (in km)", min_value=1, max_value=50, value=10)
 
-    # Other input details
     preparation_time = st.number_input("Preparation Time (in minutes)", min_value=1, max_value=120, value=20)
     Courier_Experience = st.slider("Courier Experience (in years)", min_value=0, max_value=20, value=2)
     time_of_Day = st.selectbox("Time of Day", ['Afternoon', 'Evening', 'Night', 'Morning'])
 
-    # Submit button
     submit = st.form_submit_button("Predict Delivery Time")
 
-# Process the input and make prediction
+# Process input and make prediction
 if submit:
-    # Mapping categorical input to numerical values for the model
+    # Map inputs to numerical values
     weather_mapping = {'Windy': 1, 'Clear': 2, 'Foggy': 3, 'Rainy': 4, 'Snowy': 5}
     traffic_mapping = {'Low': 1, 'Medium': 2, 'High': 3}
     time_of_day_mapping = {'Morning': 1, 'Afternoon': 2, 'Evening': 3, 'Night': 4}
     vehicle_mapping = {'Scooter': 1, 'Bike': 2, 'Car': 3}
 
-    # Data for prediction
+    # Create DataFrame for prediction
     prediction_data = pd.DataFrame({
         'Distance_km': [Distance],
         'Weather': [weather_mapping[weather]],
@@ -103,20 +93,18 @@ if submit:
         'Courier_Experience_yrs': [Courier_Experience]
     })
 
-    # Show a progress bar
+    # Show a progress bar while processing the prediction
     progress = st.progress(0)
     for i in range(100):
         time.sleep(0.02)  # Simulate a delay
         progress.progress(i + 1)
 
-    # Spinner while loading prediction
+    # Show the loading spinner during the prediction process
     with st.spinner("Making your prediction..."):
         try:
-            # Load the prediction model
+            # Load the model and make a prediction
             with open('modellinear.pkl', 'rb') as file:
                 model = pickle.load(file)
-
-            # Predict delivery time
             prediction = model.predict(prediction_data)
             prediction_value = round(float(prediction[0]))
 
@@ -127,14 +115,22 @@ if submit:
                 unsafe_allow_html=True,
             )
 
-        # Handle file errors
+            # Calculate real-time delivery completion time
+            current_time = datetime.now()
+            delivery_time = current_time + timedelta(minutes=prediction_value)
+            formatted_delivery_time = delivery_time.strftime("%I:%M %p")
+
+            st.markdown(
+                f"<h3 style='text-align: center; color: #4caf50;'>📅 Your Order is Expected at: {formatted_delivery_time}</h3>",
+                unsafe_allow_html=True,
+            )
+
         except FileNotFoundError:
             st.error("Model file not found. Please upload 'modellinear.pkl' in the current directory.")
-        # Catch all other exceptions
         except Exception as e:
             st.error(f"An error occurred: {e}")
 
-        # Provide feedback based on traffic and weather conditions
+        # Provide feedback based on weather and traffic conditions
         if traffic_level == 'High':
             st.warning("⚠ Traffic is high. Your order may be delayed.")
         elif traffic_level == 'Medium':
@@ -149,13 +145,13 @@ if submit:
         else:
             st.success("☀ Clear weather means smooth delivery conditions!")
 
-        # Show a random fun fact
+        # Fun fact display
         random_fact = random.choice(fun_facts)
         fact_heading = "Did you know?"
         st.subheader(fact_heading)
         st.write(f"*Fact:* {random_fact}")
 
-# Footer
+# Add footer
 st.markdown(
     """
     <hr style="border:1px solid #ddd;">
