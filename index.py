@@ -50,7 +50,7 @@ st.markdown(
 )
 
 # App header and title
-st.image("food.png", use_container_width=True)
+st.image("food.jpeg", use_container_width=True)
 st.title("🚀 Food Delivery Time Prediction")
 st.subheader("Predict how long your food delivery will take based on various factors.")
 
