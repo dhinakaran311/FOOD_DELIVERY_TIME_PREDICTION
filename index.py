@@ -4,7 +4,7 @@ import pickle
 import random
 import time
 from datetime import datetime, timedelta
-
+import pytz 
 # Set a custom page configuration
 st.set_page_config(
     page_title="Food Delivery Time Prediction",
@@ -116,14 +116,15 @@ if submit:
             )
 
             # Calculate real-time delivery completion time
-            current_time = datetime.now()
+            ist = pytz.timezone("Asia/Kolkata")
+            current_time = datetime.now(ist)  # localized time
             delivery_time = current_time + timedelta(minutes=prediction_value)
             formatted_delivery_time = delivery_time.strftime("%I:%M %p")
 
             st.markdown(
-                f"<h3 style='text-align: center; color: #4caf50;'>📅 Your Order is Expected at: {formatted_delivery_time}</h3>",
-                unsafe_allow_html=True,
-            )
+            f"<h3 style='text-align: center; color: #4caf50;'>📅 Your Order is Expected at: {formatted_delivery_time}</h3>",
+            unsafe_allow_html=True,
+)
 
         except FileNotFoundError:
             st.error("Model file not found. Please upload 'modellinear.pkl' in the current directory.")
