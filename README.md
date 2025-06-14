@@ -126,27 +126,11 @@ Estimated Delivery Time: Predicted time (in minutes) for the food to be delivere
 
 ---
 
-# Setup and Usage
+## 🌐 Live Demo
 
-1. Clone this repository:
+🔗 [**Click here to try the app live**](https://fooddeliverytimeprediction-nskzmwyyvsxjskchmiwncm.streamlit.app/)
 
-   git clone       
-https://github.com/dhinakaran311/food-delivery-time-prediction.git
-cd food-delivery-time-prediction
-
-
-2. Install dependencies:
-
-   pip install -r requirements.txt
-
-
-3. Run the Streamlit app:
-
-   streamlit run app.py
-
-
-4. Input the required details via the Streamlit interface to get the estimated delivery time.
-
+---
 
 
 
